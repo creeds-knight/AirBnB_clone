@@ -13,10 +13,11 @@ class FileStorage():
                 - save
                 -reload
     """
+    __file_path = "file.json"
+    __objects = {}
 
     def __init__(self):
         """ A method to initialise the filestorage class"""
-        self.__file_path = "file.json"
         self.__objects = {}
 
     def all(self):
