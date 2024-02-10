@@ -30,6 +30,7 @@ class TestFileStorage(unittest.TestCase):
 
     def tearDown(self):
         """ Resetting all unittests"""
+        self.storage._FileStorage__objects.clear()
         if os.path.exists(self.file_path):
             os.remove(self.file_path)
 
@@ -62,6 +63,7 @@ class TestFileStorage(unittest.TestCase):
 
     def test_file_storage_state(self):
         """ A test case to test the file storage before items are reloaded"""
+        print(FS._FileStorage__objects)
         self.assertEqual(len(self.storage.all()), 0)
 
     def test_save_and_reload(self):
