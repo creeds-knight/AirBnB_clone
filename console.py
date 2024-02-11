@@ -38,9 +38,13 @@ class HBNBCommand(cmd.Cmd):
         args = shlex.split(line)
         return args
 
-    def execute_command(self, class_name, method_name):
+    def execute_command(self, class_name, method_name, args):
         """ A method to get the command when using unreconginesd format"""
-        command = f"{method_name} {class_name}"
+        all_args = "".join(args)
+        if len(all_args) == 0:
+            command = f"{method_name} {class_name}"
+        else:
+            command = f"{method_name} {class_name} {all_args}"
         self.onecmd(command)
 
 
@@ -57,8 +61,9 @@ class HBNBCommand(cmd.Cmd):
             return super().default(line)
         class_name = match.group(1)
         method_name = match.group(2)
+        idx = match.group(3)
         if class_name in classes:
-            self.execute_command(class_name, method_name)
+            self.execute_command(class_name, method_name, idx)
 
 
     def do_create(self, class_):
