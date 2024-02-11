@@ -18,7 +18,6 @@ class HBNBCommand(cmd.Cmd):
     """ Theee _AirBnB_ CONSOLE"""
     prompt = "(hbnb)"
 
-
     def do_quit(self, line):
         """A command to exit the program"""
         print()
@@ -38,6 +37,12 @@ class HBNBCommand(cmd.Cmd):
         """
         args = shlex.split(line)
         return args
+
+    def default(self, line):
+        """ A method to handle all unidentified arguments"""
+        regex = r'^\b([A-Z][a-zA-Z0-9]*)\.\b([a-zA-Z_][a-zA-Z0-9]*)\((.*)\)$'
+
+        match = re.match(regex, line)
 
     def do_create(self, class_):
         """ Creates a new instance of basemodel
@@ -66,7 +71,8 @@ class HBNBCommand(cmd.Cmd):
     def do_show(self, line):
         """ A method to show contents of the file """
         args = self.parser(line)
-        classes = ["BaseModel", "User", "State", "City", "Amenity", "Review"]
+        classes = ["BaseModel", "User", "State",
+                   "Place", "City", "Amenity", "Review"]
         if len(args) == 0:
             print("** class name missing **")
         elif args[0] not in classes:
@@ -83,7 +89,8 @@ class HBNBCommand(cmd.Cmd):
     def do_destroy(self, line):
         """ A method to del an instance based on the id"""
         args = self.parser(line)
-        classes = ["BaseModel", "User", "State", "City", "Amenity", "Review"]
+        classes = ["BaseModel", "User", "State",
+                   "Place", "City", "Amenity", "Review"]
         if len(args) == 0:
             print("** class name is missing **")
         elif args[0] not in classes:
@@ -98,11 +105,11 @@ class HBNBCommand(cmd.Cmd):
             del storage.all()[key]
             storage.save()
 
-
     def do_all(self, line):
         """ A method to print all instances"""
         args = self.parser(line)
-        classes = ["BaseModel", "User", "State", "City", "Amenity", "Review"]
+        classes = ["BaseModel", "User", "State",
+                   "Place", "City", "Amenity", "Review"]
         instances = []
         if len(args) == 0:
             for key, value in storage.all().items():
@@ -112,17 +119,20 @@ class HBNBCommand(cmd.Cmd):
         elif len(args) == 1:
             if args[0] in classes:
                 for key, value in storage.all().items():
-                    instances.append(str(value))
+                    claas, idx = key.split('.')
+                    if claas == args[0]:
+                        instances.append(str(value))
                 print(instances)
                 return
-            else:
-                print("** class doesn't exist **")
+        else:
+            print("** class doesn't exist **")
 
     def do_update(self, line):
         """ A method to update an instance based on the class  name and id
             usage: update <class name> <id> <attribute name> "<atrribute>"""
         args = self.parser(line)
-        classes = ["BaseModel", "User", "State", "City", "Amenity", "Review"]
+        classes = ["BaseModel", "User", "State",
+                   "Place", "City", "Amenity", "Review"]
         key = "{}.{}".format(args[0], args[1])
         if len(args) == 0:
             print("** class name is missing **")
@@ -142,6 +152,7 @@ class HBNBCommand(cmd.Cmd):
             inst = storage.all()[key]
             setattr(inst, attr_name, attr)
             storage.save()
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
