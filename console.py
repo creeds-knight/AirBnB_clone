@@ -82,7 +82,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_destroy(self, line):
         """ A method to del an instance based on the id"""
-        args = shlex.split(line)
+        args = self.parser(line)
         classes = ["BaseModel", "User", "State", "City", "Amenity", "Review"]
         if len(args) == 0:
             print("** class name is missing **")
@@ -98,29 +98,22 @@ class HBNBCommand(cmd.Cmd):
             del storage.all()[key]
             storage.save()
 
-    def print_instances(self, instances):
-        """ print instances without back lashes"""
-        new_lst = []
-        for item in instances:
-            cleaned_instance = re.sub(r"['\"]", "", item)
-            new_lst.append(cleaned_instance)
-        print(new_lst)
 
     def do_all(self, line):
         """ A method to print all instances"""
-        args = shlex.split(line)
+        args = self.parser(line)
         classes = ["BaseModel", "User", "State", "City", "Amenity", "Review"]
         instances = []
         if len(args) == 0:
             for key, value in storage.all().items():
                 instances.append(str(value))
-            self.print_instances(instances)
+            print(instances)
             return
         elif len(args) == 1:
             if args[0] in classes:
                 for key, value in storage.all().items():
                     instances.append(str(value))
-                self.print_instances(instances)
+                print(instances)
                 return
             else:
                 print("** class doesn't exist **")
@@ -128,7 +121,7 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, line):
         """ A method to update an instance based on the class  name and id
             usage: update <class name> <id> <attribute name> "<atrribute>"""
-        args = shlex.split(line)
+        args = self.parser(line)
         classes = ["BaseModel", "User", "State", "City", "Amenity", "Review"]
         key = "{}.{}".format(args[0], args[1])
         if len(args) == 0:
