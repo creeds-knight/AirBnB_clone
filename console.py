@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """ A module that contains the console program"""
 import cmd
+import shlex
 import re
 from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage
@@ -31,8 +32,12 @@ class HBNBCommand(cmd.Cmd):
     def emptyline(self):
         pass
 
-    def __str__(self):
-        return f"[self.__class__.__name__] ({self.id}) {self.__dict__}"
+    def parser(self, line):
+        """ A method to properly parse the arguments passed into the
+            command line
+        """
+        args = shlex.split(line)
+        return args
 
     def do_create(self, class_):
         """ Creates a new instance of basemodel
@@ -47,9 +52,11 @@ class HBNBCommand(cmd.Cmd):
                 "Review": Review,
                 "Place": Place
                 }
-        if not class_:
+        args = self.parser(class_)
+
+        if len(args) == 0:
             print("** class name missing **")
-        elif class_ in class_map:
+        elif args[0] in class_map:
             class_inst = class_map[class_]()
             class_inst.save()
             print(class_inst.id)
@@ -58,7 +65,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_show(self, line):
         """ A method to show contents of the file """
-        args = line.split()
+        args = self.parser(line)
         classes = ["BaseModel", "User", "State", "City", "Amenity", "Review"]
         if len(args) == 0:
             print("** class name missing **")
@@ -75,7 +82,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_destroy(self, line):
         """ A method to del an instance based on the id"""
-        args = line.split()
+        args = shlex.split(line)
         classes = ["BaseModel", "User", "State", "City", "Amenity", "Review"]
         if len(args) == 0:
             print("** class name is missing **")
@@ -101,7 +108,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, line):
         """ A method to print all instances"""
-        args = line.split()
+        args = shlex.split(line)
         classes = ["BaseModel", "User", "State", "City", "Amenity", "Review"]
         instances = []
         if len(args) == 0:
@@ -121,7 +128,7 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, line):
         """ A method to update an instance based on the class  name and id
             usage: update <class name> <id> <attribute name> "<atrribute>"""
-        args = line.split()
+        args = shlex.split(line)
         classes = ["BaseModel", "User", "State", "City", "Amenity", "Review"]
         key = "{}.{}".format(args[0], args[1])
         if len(args) == 0:
