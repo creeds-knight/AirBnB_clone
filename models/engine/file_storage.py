@@ -16,7 +16,6 @@ class FileStorage():
     __file_path = "file.json"
     __objects = {}
 
-
     def all(self):
         """ A method to return __object"""
         return FileStorage.__objects
@@ -28,7 +27,8 @@ class FileStorage():
 
     def save(self):
         """ A method to serialise objects to a file path"""
-        ser_obj = {key: obj.to_dict() for key, obj in FileStorage.__objects.items()}
+        ser_obj = {key: obj.to_dict() for key, obj in
+                   FileStorage.__objects.items()}
         with open(FileStorage.__file_path, 'w') as f:
             json.dump(ser_obj, f)
 
