@@ -154,7 +154,6 @@ class HBNBCommand(cmd.Cmd):
         args = self.parser(line)
         classes = ["BaseModel", "User", "State",
                    "Place", "City", "Amenity", "Review"]
-        key = "{}.{}".format(args[0], args[1])
         if len(args) == 0:
             print("** class name missing **")
         elif args[0] not in classes:
@@ -165,14 +164,16 @@ class HBNBCommand(cmd.Cmd):
             print("** attribute name missing **")
         elif len(args) == 3:
             print("** value missing **")
-        elif key not in storage.all():
-            print("** no instance found **")
-        elif len(args) == 4:
-            attr_name = args[2]
-            attr = args[3]
-            inst = storage.all()[key]
-            setattr(inst, attr_name, attr)
-            storage.save()
+        else:
+            key = "{}.{}".format(args[0], args[1])
+            if key not in storage.all():
+                print("** no instance found **")
+            else:
+                attr_name = args[2]
+                attr = args[3]
+                inst = storage.all()[key]
+                setattr(inst, attr_name, attr)
+                storage.save()
 
     def do_count(self, class_name):
         """ retrieve the number of instances of a particular class"""
@@ -181,7 +182,6 @@ class HBNBCommand(cmd.Cmd):
             if key.startswith(class_name):
                 count += 1
         print(count)
-
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
