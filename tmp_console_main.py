@@ -59,10 +59,8 @@ class HBNBCommand(cmd.Cmd):
         class_name = match.group(1)
         method_name = match.group(2)
         idx = match.group(3)
-        if idx:
-            new_args = idx.split(',')
         if class_name in classes:
-            self.execute_command(class_name, method_name, new_args)
+            self.execute_command(class_name, method_name, idx)
         else:
             return super().default(line)
 

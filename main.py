@@ -19,7 +19,6 @@ if not os.path.exists(file_path):
 if os.path.exists(file_path):
     os.remove(file_path)
 
-
 """
  Backup console file
 """
@@ -63,6 +62,7 @@ def exec_command(my_console, the_command, last_lines = 1):
     my_console.stdout = io.StringIO()
     real_stdout = sys.stdout
     sys.stdout = my_console.stdout
+    my_console.preloop()
     the_command = my_console.precmd(the_command)
     my_console.onecmd(the_command)
     sys.stdout = real_stdout
@@ -72,19 +72,35 @@ def exec_command(my_console, the_command, last_lines = 1):
 """
  Tests
 """
-result = exec_command(my_console, "create BaseModel")
+model_class = "BaseModel"
+attribute_name = "attribute_name"
+attribute_value = "string_value"
+result = exec_command(my_console, "create {}".format(model_class))
 if result is None or result == "":
     print("FAIL: No ID retrieved")
 
 model_id = result
 
-result = exec_command(my_console, "all Fake")
-if result is None or result == "":
-    print("FAIL: no output")
 
-search_str = "** class doesn't exist **"
-if result != search_str:
-    print("FAIL: wrong message: \"{}\" instead of \"{}\"".format(result, search_str))
+def model_has_attribute(my_console, model_class, model_id, attr_name, attr_val):
+    is_found = False
+    result = exec_command(my_console, "show {} {}".format(model_class, model_id))
+    if result is None or result == "":
+        pass
+    elif model_id in result and "id" in result and attr_name in result and attr_val in result:
+        is_found = True
+    return is_found
+
+result = exec_command(my_console, "{}.update(\"{}\", \"{}\", \"{}\")".format(model_class, model_id, attribute_name, attribute_value))
+if not model_has_attribute(my_console, model_class, model_id, attribute_name, attribute_value):
+    result = exec_command(my_console, "{}.update({}, \"{}\", \"{}\")".format(model_class, model_id, attribute_name, attribute_value))
+    if not model_has_attribute(my_console, model_class, model_id, attribute_name, attribute_value):
+        result = exec_command(my_console, "{}.update(\"{}.{}\", \"{}\", \"{}\")".format(model_class, model_class, model_id, attribute_name, attribute_value))
+    if not model_has_attribute(my_console, model_class, model_id, attribute_name, attribute_value):
+        result = exec_command(my_console, "{}.update({}.{}, \"{}\", \"{}\")".format(model_class, model_class, model_id, attribute_name, attribute_value))
+
+if not model_has_attribute(my_console, model_class, model_id, attribute_name, attribute_value):
+    print("FAIL: model doesn't have new attribute")
 
 print("OK", end="")
 
