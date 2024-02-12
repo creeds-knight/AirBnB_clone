@@ -113,7 +113,7 @@ class HBNBCommand(cmd.Cmd):
         classes = ["BaseModel", "User", "State",
                    "Place", "City", "Amenity", "Review"]
         if len(args) == 0:
-            print("** class name is missing **")
+            print("** class name missing **")
         elif args[0] not in classes:
             print("** class doesn't exist **")
         elif len(args) == 1:
@@ -166,7 +166,7 @@ class HBNBCommand(cmd.Cmd):
         elif len(args) == 3:
             print("** value missing **")
         elif key not in storage.all():
-            print("** No instance found **")
+            print("** no instance found **")
         elif len(args) == 4:
             attr_name = args[2]
             attr = args[3]
