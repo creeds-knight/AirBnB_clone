@@ -156,7 +156,7 @@ class HBNBCommand(cmd.Cmd):
                    "Place", "City", "Amenity", "Review"]
         key = "{}.{}".format(args[0], args[1])
         if len(args) == 0:
-            print("** class name is missing **")
+            print("** class name missing **")
         elif args[0] not in classes:
             print("** class doesn't exist **")
         elif len(args) == 1:
