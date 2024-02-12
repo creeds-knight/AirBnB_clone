@@ -215,7 +215,6 @@ class HBNBCommand(cmd.Cmd):
             setattr(instance, attr_name, attr_value)
         instance.save()
 
-
     def do_count(self, class_name):
         """ retrieve the number of instances of a particular class"""
         count = 0
@@ -223,6 +222,7 @@ class HBNBCommand(cmd.Cmd):
             if key.startswith(class_name):
                 count += 1
         print(count)
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
