@@ -3,6 +3,7 @@
 import cmd
 import shlex
 import re
+import json
 from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage
 from models.user import User
@@ -50,9 +51,11 @@ class HBNBCommand(cmd.Cmd):
     def default(self, line):
         """ A method to handle all unidentified arguments"""
         regex = r'^\b([A-Z][a-zA-Z0-9]*)\.\b([a-zA-Z_][a-zA-Z0-9]*)\((.*)\)$'
+        dct_check = r"\(([^)]+),\s*({.*})\)"
         classes = ["BaseModel", "User", "State",
                    "Place", "City", "Amenity", "Review"]
 
+        dct_pos = re.search(dct_check, line)
         match = re.match(regex, line)
         if not match:
             return super().default(line)
@@ -61,8 +64,14 @@ class HBNBCommand(cmd.Cmd):
         idx = match.group(3)
         if idx:
             new_args = idx.split(',')
+
         if class_name in classes:
-            self.execute_command(class_name, method_name, new_args)
+            if method_name == "update" and dct_pos:
+                obj_id = dct_pos.group(1)
+                dictionary = dct_pos.group(2)
+                self.update_dict(class_name, obj_id, dictionary)
+            else:
+                self.execute_command(class_name, method_name, new_args)
         else:
             return super().default(line)
 
@@ -176,6 +185,36 @@ class HBNBCommand(cmd.Cmd):
                 inst = storage.all()[key]
                 setattr(inst, attr_name, attr)
                 storage.save()
+
+    def update_dict(self, class_name, obj_id, dictionary):
+        """ Update an instance based on the className
+            id and the dictionary passed
+        """
+        classes = ["BaseModel", "User", "State",
+                   "Place", "City", "Amenity", "Review"]
+
+        if class_name not in classes:
+            print("** class doesn't exist **")
+            return
+        if not obj_id:
+            print("** instance id missing **")
+            return
+        obj_id = obj_id.strip('"')
+        try:
+            dict_attr = json.loads(dictionary.replace("'", "\""))
+        except json.JSONDecodeError:
+            print("** invalid dictionary **")
+            return
+
+        key = "{}.{}".format(class_name, obj_id)
+        if key not in storage.all():
+            print("** no instance found **")
+            return
+        instance = storage.all().get(key)
+        for attr_name, attr_value in dict_attr.items():
+            setattr(instance, attr_name, attr_value)
+        instance.save()
+
 
     def do_count(self, class_name):
         """ retrieve the number of instances of a particular class"""
