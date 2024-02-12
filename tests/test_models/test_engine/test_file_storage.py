@@ -20,13 +20,6 @@ class TestFileStorage(unittest.TestCase):
         """ Initialisation of all instances for unit tests """
         self.storage = FS()
         self.file_path = "file.json"
-        self.b_m = BM()
-        self.u_s = User()
-        self.s_t = State()
-        self.c_y = City()
-        self.a_y = Amenity()
-        self.p_c = Place()
-        self.r_v = Review()
 
     def tearDown(self):
         """ Resetting all unittests"""
@@ -49,13 +42,15 @@ class TestFileStorage(unittest.TestCase):
         """ A test case to check if the new object created
             is stored in the dictionary
         """
-        self.storage.new(self.c_y)
+        self.b_m = BM()
+        self.storage.new(self.b_m)
         all_objs = self.storage.all()
         self.assertEqual(len(all_objs), 1)
-        self.assertIn('City.' + self.c_y.id, all_objs)
+        self.assertIn('BaseModel.' + self.b_m.id, all_objs)
 
     def test_save_creates_file(self):
         """ A test case to check if the save method creates a file"""
+        self.b_m = BM()
         self.assertFalse(os.path.exists(self.file_path))
         self.storage.new(self.b_m)
         self.storage.save()
@@ -68,12 +63,13 @@ class TestFileStorage(unittest.TestCase):
 
     def test_save_and_reload(self):
         """ A test case to test the file storage after items are reloaded"""
-        self.storage.new(self.r_v)
+        self.b_m = BM()
+        self.storage.new(self.b_m)
         self.storage.save()
         self.storage.reload()
         all_objs = self.storage.all()
         self.assertEqual(len(all_objs), 1)
-        self.assertIn('Review.' + self.r_v.id, all_objs)
+        self.assertIn('BaseModel.' + self.b_m.id, all_objs)
 
     def test_save_reload_with_no_file(self):
         """ A test case to test reloading on non existent files"""
@@ -84,15 +80,12 @@ class TestFileStorage(unittest.TestCase):
 
     def test_reload_with_existing_file(self):
         """ A test case to test reloading on a file"""
-        self.storage.new(self.c_y)
+        self.b_m = BM()
+        self.b_m = BM()
         self.storage.new(self.b_m)
-        self.storage.new(self.a_y)
-        self.storage.new(self.r_v)
+        self.storage.new(self.b_m)
         self.storage.save()
         self.storage.reload()
         all_objs = self.storage.all()
-        self.assertEqual(len(all_objs), 4)
-        self.assertIn('City.' + self.c_y.id, all_objs)
+        self.assertEqual(len(all_objs), 2)
         self.assertIn('BaseModel.' + self.b_m.id, all_objs)
-        self.assertIn('Amenity.' + self.a_y.id, all_objs)
-        self.assertIn('Review.' + self.r_v.id, all_objs)

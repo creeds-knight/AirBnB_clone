@@ -52,18 +52,21 @@ class HBNBCommand(cmd.Cmd):
     def default(self, line):
         """ A method to handle all unidentified arguments"""
         regex = r'^\b([A-Z][a-zA-Z0-9]*)\.\b([a-zA-Z_][a-zA-Z0-9]*)\((.*)\)$'
-
         classes = ["BaseModel", "User", "State",
                    "Place", "City", "Amenity", "Review"]
 
         match = re.match(regex, line)
+        dict_args = re.search(reg_dct, line)
         if not match:
             return super().default(line)
         class_name = match.group(1)
         method_name = match.group(2)
         idx = match.group(3)
+
         if class_name in classes:
             self.execute_command(class_name, method_name, idx)
+        else:
+            return super().default(line)
 
 
     def do_create(self, class_):
