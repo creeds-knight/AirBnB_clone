@@ -17,7 +17,7 @@ class TestHBNBCommand(unittest.TestCase):
     @patch('sys.stdout', new_callable=StringIO)
     def test_do_quit(self, mock_stdout):
         self.assertTrue(self.console.onecmd('quit'))
-        self.assertEqual('', mock_stdout.getvalue())
+        self.assertEqual('\n', mock_stdout.getvalue())
 
     @patch('sys.stdout', new_callable=StringIO)
     def test_emptyline(self, mock_stdout):
@@ -27,7 +27,7 @@ class TestHBNBCommand(unittest.TestCase):
     @patch('sys.stdout', new_callable=StringIO)
     def test_do_EOF(self, mock_stdout):
         self.assertTrue(self.console.onecmd('EOF'))
-        self.assertEqual('', mock_stdout.getvalue())
+        self.assertEqual('\n', mock_stdout.getvalue())
 
     def test_do_create(self):
         """ A method to test the create function """
