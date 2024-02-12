@@ -145,8 +145,8 @@ class HBNBCommand(cmd.Cmd):
                         instances.append(str(value))
                 print(instances)
                 return
-        else:
-            print("** class doesn't exist **")
+            else:
+                print("** class doesn't exist **")
 
     def do_update(self, line):
         """ A method to update an instance based on the class  name and id
